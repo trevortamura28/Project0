@@ -8,7 +8,7 @@ namespace PizzaBox.Domain.Models
 {
   public class Location
   {
-    private readonly TrevorDBContext _db = new TrevorDBContext();
+    public readonly TrevorDBContext _db;
     public Inventory Stock;
     public int ZipCode;
     public List<Topping> PizzaToppingsOffered;
@@ -17,6 +17,8 @@ namespace PizzaBox.Domain.Models
 
     public Location()
     {
+
+      _db = new TrevorDBContext();
       PizzaToppingsOffered = new List<Topping>();
       PreviousCustomers = new Dictionary<string, User>();
       StoreOrderHistory = new List<Order>();
@@ -26,21 +28,6 @@ namespace PizzaBox.Domain.Models
     {
       PreviousCustomers.Add(newCustomer.UserName.LongName, newCustomer);
     }
-
-    public User GetUser(string name)
-    {
-      User gotUser = new User();
-      foreach (var U in PreviousCustomers)
-      {
-        if (U.Key == name)
-        {
-          gotUser = U.Value;
-          break;
-        }
-      }
-      return gotUser;
-    }
-
     public void ProcessPizza(Pizza p)
     {
       Data.Entities.Pizza ph = new Data.Entities.Pizza { };
@@ -52,6 +39,7 @@ namespace PizzaBox.Domain.Models
           Name = p.PizzaCrust.CrustSize.Name
         }
       };
+      
       ph.Price = p.PizzaCost;
       _db.Pizza.Add(ph);
       foreach (Topping t in p.PizzaToppings)
@@ -76,13 +64,7 @@ namespace PizzaBox.Domain.Models
       PizzaToppingsOffered.Add(new Topping("onions"));
       PizzaToppingsOffered.Add(new Topping("green peppers"));
       PizzaToppingsOffered.Add(new Topping("red peppers"));
-      ZipCode=90266;
-    }
-
-    public int CheckInventory()
-    {
-      int a = 0;
-      return a;
+  
     }
   }
 }

@@ -11,7 +11,8 @@ namespace PizzaBox.Client
         static void Main(string[] args)
         {
           Location Loc = new Location();
-          UserInterface UII = new UserInterface(Loc);
+          UserInterface UII = new UserInterface();
+          UII.L = UII.GetLocation();
           UII.UIMain();
           System.Console.WriteLine("Thank you for visiting Trevor's PizzaBox. Have a nice day. ");
         }

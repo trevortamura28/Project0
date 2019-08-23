@@ -2,11 +2,13 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using PizzaBox.Domain.Abstracts;
+using PizzaBox.Data.Entities;
 
 namespace PizzaBox.Domain.Models
 {
   public class UserInterface
   {
+    public readonly TrevorDBContext _db;
     public User U;
     public Location L;
     public List<Location> ListOfLocations;
@@ -31,10 +33,15 @@ namespace PizzaBox.Domain.Models
       }
       return;
     }
-    public UserInterface(Location l)
+    public Location GetLocation()
     {
-      L = l;
-      ListOfLocations = new List<Location>{l};
+      System.Console.WriteLine("Not finished here. ");
+      return new Location();
+    }
+    public UserInterface()
+    {
+      ListOfLocations = new List<Location>();
+      _db = new TrevorDBContext();
       End = false;
     }
 
@@ -51,6 +58,20 @@ namespace PizzaBox.Domain.Models
       {
         U = new User();
         U.RegisterUser();
+        Data.Entities.Names un = new Data.Entities.Names
+        {
+          FirstName = U.UserName.FirstName,
+          LastName = U.UserName.LastName,
+          LongName = U.UserName.LongName
+        };
+        L._db.Names.Add(un);
+        L._db.User.Add(
+        new Data.Entities.User
+        {
+          ZipCode = U.ZipCode,
+          NameId = un.NameId
+        });
+        L._db.SaveChanges();
       }
       else
       {
@@ -60,6 +81,7 @@ namespace PizzaBox.Domain.Models
     }
     public User FindUser()
     {
+      System.Console.WriteLine("This is a work in progress.");
       return new User();
     }
 
@@ -76,6 +98,7 @@ namespace PizzaBox.Domain.Models
           L.ProcessPizza(p);
         }
         U.CustomerOrderHistory.Add(O);
+        L._db.SaveChanges();
         U.HasOrdered = true;
       }
       else //(confirmed == false)
@@ -83,14 +106,14 @@ namespace PizzaBox.Domain.Models
         return;
       }
     }
-public void PostOrderMenu()
+    public void PostOrderMenu()
     {
       System.Console.WriteLine("What would you like to do? Enter a number. ");
       System.Console.WriteLine("1. View locations\n2. View order history\n3. Sign out");
       string input = System.Console.ReadLine();
       if (input == "1")
       {
-        PrintLocations(ListOfLocations);
+        PrintLocations();
         PostOrderMenu();
       }
       else if (input == "2")
@@ -116,7 +139,7 @@ public void PostOrderMenu()
       string input = System.Console.ReadLine();
       if (input == "1")
       {
-        PrintLocations(ListOfLocations);
+        PrintLocations();
         PreOrderMenu();
       }
       else if (input == "2")
@@ -144,12 +167,12 @@ public void PostOrderMenu()
         PreOrderMenu();
       }
     }
-    public void PrintLocations(List<Location> l)
+    public void PrintLocations()
     {
       System.Console.WriteLine("These are the locations.");
-      foreach (Location loc in l)
+      foreach (Data.Entities.Location loc in _db.Location)
       {
-          System.Console.WriteLine("Location zipcode {0}",loc.ZipCode);
+        System.Console.WriteLine("{0}", loc.ZipCode);
       }
     }
 
@@ -158,11 +181,12 @@ public void PostOrderMenu()
       System.Console.WriteLine("These are your past orders.");
       foreach (Order o in U.CustomerOrderHistory)
       {
-          o.PrintOrder();
+        o.PrintOrder();
       }
     }
     public Location SelectLocation(List<Location> l)
     {
+      System.Console.WriteLine("Still working on this. ");
       return new Location();
     }
     public bool ConfirmOrder(Order o)
@@ -183,6 +207,33 @@ public void PostOrderMenu()
         System.Console.WriteLine("Invalid input. Please answer 'yes' or 'no'.");
         return ConfirmOrder(o);
       }
+    }
+    public int GetLocationId(Location l)
+    {
+      int i=0;
+      foreach (Data.Entities.Location loc in _db.Location)
+      {
+        if (loc.ZipCode == l.ZipCode)
+        {
+          //i = (int)loc.ZipCode;
+          return i;
+        }
+      }
+      return (i = 0);
+    }
+
+    public int GetUserId(User u)
+    {
+      int i=0;
+      foreach (Data.Entities.User us in L._db.User)
+      {
+        if (us.Name.LongName == u.UserName.LongName)
+        {
+          //i = (int)us.UserId;
+          return i;
+        }
+      }
+      return (i = 0);
     }
   }
 }
