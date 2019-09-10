@@ -77,4 +77,5 @@ trigger:
 
 
 variables:
+  - testVar:  'tuesday'
 
