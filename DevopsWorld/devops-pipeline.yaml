@@ -16,19 +16,6 @@ stages:
         steps:
           - script: |
               echo 'build passed...'
-  - stage:  'build'
-    condition:  succeeded()
-    dependsOn:  
-    displayName:  'build-mvc'
-    jobs:
-      - job:
-        condition:  succeeded()
-        displayName: 'build-process'
-        pool:
-          vmImage:  'ubuntu-16.04'
-        steps:
-          - script: |
-              echo 'build passed...'
   - stage:  'test'
     condition:  succeeded()
     dependsOn:  
