@@ -69,10 +69,10 @@ stages:
           - script: |
               echo 'deploy passed...'
 
-triggers:
-  - branches:
-      include:
-        - master
+trigger:
+  branches:
+    include:
+      - master
 
 
 
